@@ -97,7 +97,7 @@ server.register([{
       },
       handler: {
         directory: {
-          path: '/public/',
+          path: 'public',
           index: ['index.html']
         }
       }
