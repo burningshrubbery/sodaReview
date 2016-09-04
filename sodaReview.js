@@ -18,7 +18,7 @@ const os = require('os');
 const server = new Hapi.Server();
 server.connection({
   address: '0.0.0.0',
-  port: 8080,
+  port: 8081,
 });
 
 let mongodbUri = 'mongodb://localhost:27017/local';
@@ -27,9 +27,10 @@ let db = '';
 mongoclient.connect(mongodbUri, function(err, database) {
   if (err) {
     server.log(['debug'], 'MongoDB Connection error: ' + err);
+  } else {
+    db = database;
+    server.log(['debug'], 'Connected to: ' + mongodbUri);
   }
-  db = database;
-  server.log(['debug'], 'Connected to: ' + mongodbUri);
 });
 
 server.register([{
@@ -310,8 +311,12 @@ server.register([{
       }
     }]);
 
-    server.start(function() {
-      server.log(['info', 'env'], 'Soda Review started and listening at ' + server.info.uri);
+    server.start(function(err) {
+      if (err) {
+        server.log(['debug', 'env'], 'Server start error: ' + err);
+      } else {
+        server.log(['info', 'env'], 'Soda Review started and listening at ' + server.info.uri);
+      }
     });
   }
 });
